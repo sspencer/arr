@@ -51,7 +51,10 @@ func main() {
 			fd, err := os.Open(fn)
 			if err == nil {
 				run(fd, os.Stdout, col)
-				fd.Close()
+				if err = fd.Close(); err != nil {
+					panic(err)
+				}
+
 			} else {
 				fmt.Fprintln(os.Stderr, fmt.Errorf("%s: %w", ErrFileInvalid.Error(), err))
 				os.Exit(1)
@@ -70,7 +73,7 @@ func run(r io.Reader, w io.Writer, col int) {
 		chunks := strings.Split(lines.Text(), "\"")
 		l := len(chunks)
 		if l >= col*2+1 {
-			fmt.Println(chunks[col*2-1])
+			fmt.Fprintln(w, chunks[col*2-1])
 		}
 	}
 }
